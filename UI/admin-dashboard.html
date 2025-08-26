@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ZumbaFit Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Heroicons (for icons) -->
+    <script src="https://unpkg.com/@heroicons/react@2.0.18/24/solid/index.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'zumba-purple': '#8B5CF6',
+                        'zumba-pink': '#EC4899',
+                        'zumba-orange': '#F97316',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex">
+        <!-- Sidebar Navigation -->
+        <aside class="bg-gray-800 text-white w-64 min-h-screen flex flex-col fixed left-0 top-0 bottom-0 z-50 transition-transform duration-300 ease-in-out" id="sidebar">
+            <!-- Logo -->
+            <div class="p-4 border-b border-gray-700">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-zumba-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span class="text-xl font-bold gradient-text">ZumbaFit Pro</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-lg bg-gray-700 text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="admin-video-analysis.html" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span>Video Analysis</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                            </svg>
+                            <span>Music Library</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 ml-64">
+            <!-- Top Bar -->
+            <header class="bg-white shadow-md p-4 flex items-center justify-between sticky top-0 z-40">
+                <div class="flex items-center">
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-button" class="md:hidden mr-4 text-gray-600 hover:text-gray-900">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <h2 class="text-xl font-semibold text-gray-800">Welcome, Admin</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="admin-info" class="text-gray-700 font-medium hidden">
+                        Admin: <span id="admin-name">Admin</span>
+                    </span>
+                    <button id="admin-logout-btn" class="flex items-center space-x-2 text-red-600 hover:text-red-800 font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Sessions Card -->
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white hover:scale-105 transition-transform duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium opacity-75">Total Sessions</p>
+                                                                 <p class="text-3xl font-bold" id="total-sessions">0</p>
+                            </div>
+                            <div class="bg-blue-400/30 p-3 rounded-lg">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-green-300">↑ 12%</span>
+                            <span class="ml-2 opacity-75">vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Videos Card -->
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white hover:scale-105 transition-transform duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium opacity-75">Total Videos</p>
+                                                                 <p class="text-3xl font-bold" id="total-videos">0</p>
+                            </div>
+                            <div class="bg-purple-400/30 p-3 rounded-lg">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-green-300">↑ 18%</span>
+                            <span class="ml-2 opacity-75">vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Correct Postures Card -->
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white hover:scale-105 transition-transform duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium opacity-75">Correct Postures</p>
+                                                                 <p class="text-3xl font-bold" id="correct-postures">0</p>
+                            </div>
+                            <div class="bg-green-400/30 p-3 rounded-lg">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-green-300">↑ 8%</span>
+                            <span class="ml-2 opacity-75">vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Incorrect Postures Card -->
+                    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg p-6 text-white hover:scale-105 transition-transform duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium opacity-75">Incorrect Postures</p>
+                                                                 <p class="text-3xl font-bold" id="incorrect-postures">0</p>
+                            </div>
+                            <div class="bg-red-400/30 p-3 rounded-lg">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-red-300">↓ 5%</span>
+                            <span class="ml-2 opacity-75">vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Recent Video Activity</h3>
+                        <button id="refresh-videos-btn" onclick="loadDashboardData()" class="flex items-center space-x-2 px-3 py-2 text-sm bg-zumba-purple text-white rounded-lg hover:bg-purple-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Video ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Upload Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Analysis Result</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                                                         <tbody class="bg-white divide-y divide-gray-200" id="recent-activity-table">
+                                <!-- Loading state -->
+                                <tr id="loading-row">
+                                    <td colspan="4" class="px-6 py-8 text-center">
+                                        <div class="flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-400 animate-spin mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                            <span class="text-gray-500">Loading recent video activity...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Close sidebar on mobile when clicking outside
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 768) {
+                if (!sidebar.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('-translate-x-full');
+            }
+        });
+
+        // Admin authentication check
+        function checkAdminAuth() {
+            const adminSession = localStorage.getItem('adminSession');
+            if (!adminSession) {
+                alert('Please login as admin first');
+                window.location.href = 'admin-login.html';
+                return null;
+            }
+            return JSON.parse(adminSession);
+        }
+
+        // Logout functionality
+        function adminLogout() {
+            // Clear admin session
+            localStorage.removeItem('adminSession');
+            
+            // Show confirmation
+            alert('You have been logged out successfully!');
+            
+            // Redirect to index page
+            window.location.href = 'index.html';
+        }
+
+        // Display admin information
+        function displayAdminInfo(adminSession) {
+            const adminName = adminSession.username;
+            
+            // Update admin info
+            document.getElementById('admin-name').textContent = adminName;
+            document.getElementById('admin-info').classList.remove('hidden');
+        }
+
+        // Setup logout button
+        document.getElementById('admin-logout-btn').addEventListener('click', adminLogout);
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            const refreshBtn = document.getElementById('refresh-videos-btn');
+            const originalBtnText = refreshBtn.innerHTML;
+            
+            try {
+                console.log('🔄 Loading dashboard data...');
+                
+                // Show loading state on refresh button
+                refreshBtn.innerHTML = `
+                    <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Loading...</span>
+                `;
+                refreshBtn.disabled = true;
+                
+                // Get stats
+                const statsResponse = await fetch('http://localhost:8000/admin/stats');
+                if (!statsResponse.ok) {
+                    throw new Error(`Stats API error: ${statsResponse.status}`);
+                }
+                const stats = await statsResponse.json();
+                console.log('📊 Stats loaded:', stats);
+                
+                // Update stats cards
+                document.getElementById('total-sessions').textContent = stats.total_sessions || 0;
+                document.getElementById('total-videos').textContent = stats.total_videos || 0;
+                document.getElementById('correct-postures').textContent = stats.correct_postures || 0;
+                document.getElementById('incorrect-postures').textContent = stats.incorrect_postures || 0;
+                
+                // Get recent videos
+                const videosResponse = await fetch('http://localhost:8000/admin/videos');
+                if (!videosResponse.ok) {
+                    throw new Error(`Videos API error: ${videosResponse.status}`);
+                }
+                const videosData = await videosResponse.json();
+                console.log('🎥 Videos loaded:', videosData.videos.length, 'videos');
+                
+                // Update recent activity table
+                const tableBody = document.getElementById('recent-activity-table');
+                tableBody.innerHTML = '';
+                
+                if (videosData.videos && videosData.videos.length > 0) {
+                    videosData.videos.forEach(video => {
+                        const row = document.createElement('tr');
+                        
+                        // Determine status badge colors
+                        let resultBadgeClass = 'bg-gray-100 text-gray-800';
+                        if (video.analysis_result && video.analysis_result.toLowerCase().includes('correct')) {
+                            resultBadgeClass = 'bg-green-100 text-green-800';
+                        } else if (video.analysis_result && video.analysis_result.toLowerCase().includes('incorrect')) {
+                            resultBadgeClass = 'bg-red-100 text-red-800';
+                        }
+                        
+                        let statusBadgeClass = 'bg-blue-100 text-blue-800';
+                        if (video.status && video.status.toLowerCase() === 'processing') {
+                            statusBadgeClass = 'bg-yellow-100 text-yellow-800';
+                        }
+                        
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">${video.video_id || 'N/A'}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-500">${video.upload_date || 'N/A'}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${resultBadgeClass}">
+                                    ${video.analysis_result || 'Pending Analysis'}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadgeClass}">
+                                    ${video.status || 'Unknown'}
+                                </span>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                    
+                    console.log('✅ Recent activity table updated with', videosData.videos.length, 'videos');
+                } else {
+                    // Show no data message
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="px-6 py-8 text-center">
+                                <div class="flex flex-col items-center">
+                                    <svg class="w-12 h-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="text-gray-500 text-sm">No recent video activity</p>
+                                    <p class="text-gray-400 text-xs">Videos will appear here once uploaded</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    console.log('ℹ️ No videos found - showing empty state');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading dashboard data:', error);
+                
+                // Show error state in table
+                const tableBody = document.getElementById('recent-activity-table');
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-12 h-12 text-red-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                </svg>
+                                <p class="text-red-500 text-sm font-medium">Failed to load video activity</p>
+                                <p class="text-gray-400 text-xs">Please check your connection and try again</p>
+                                <button onclick="loadDashboardData()" class="mt-2 px-3 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
+                                    Retry
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                                 `;
+             } finally {
+                 // Restore refresh button state
+                 refreshBtn.innerHTML = originalBtnText;
+                 refreshBtn.disabled = false;
+             }
+         }
+
+        // Check admin auth on page load
+        window.addEventListener('load', function() {
+            const adminSession = checkAdminAuth();
+            if (adminSession) {
+                displayAdminInfo(adminSession);
+                loadDashboardData(); // Load real data
+            }
+        });
+    </script>
+</body>
+</html> 

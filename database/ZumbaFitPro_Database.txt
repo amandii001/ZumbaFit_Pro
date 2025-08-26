@@ -1,0 +1,85 @@
+CREATE DATABASE IF NOT EXISTS zumbafitpro;
+USE zumbafitpro;
+
+-- Admin table for managing administrative users
+CREATE TABLE IF NOT EXISTS admin (
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    role ENUM('super_admin', 'moderator') DEFAULT 'moderator'
+);
+
+-- Users table for managing participants and personalization
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_active DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Videos table for storing workout video metadata
+CREATE TABLE IF NOT EXISTS videos (
+    video_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    video_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    class_label ENUM('Squat_Correct', 'Squat_Incorrect', 'Arm_Raise_Correct', 
+                    'Arm_Raise_Incorrect', 'Knee_Extension_Correct', 'Knee_Extension_Incorrect') NOT NULL,
+    upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    duration_seconds INT DEFAULT 60,
+    recording_date DATE,
+    exercise_type VARCHAR(50),  -- e.g., 'salsa', 'hip-hop'
+    processing_status ENUM('pending', 'processed', 'failed') DEFAULT 'pending',
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Key Frames table for storing filtered, unique key frames
+CREATE TABLE IF NOT EXISTS key_frames (
+    frame_id INT AUTO_INCREMENT PRIMARY KEY,
+    video_id INT NOT NULL,
+    timestamp_sec INT NOT NULL,
+    frame_image_path VARCHAR(255),  -- Optional path to saved key frame image
+    is_correct BOOLEAN DEFAULT TRUE,  -- Indicates if frame meets posture standards
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (video_id) REFERENCES videos(video_id) ON DELETE CASCADE
+);
+
+-- Landmarks table for storing pose coordinates of key frames
+CREATE TABLE IF NOT EXISTS landmarks (
+    landmark_id INT AUTO_INCREMENT PRIMARY KEY,
+    frame_id INT NOT NULL,
+    coordinates JSON NOT NULL,  -- [x, y, z] for 33 landmarks
+    visibility_scores JSON,     -- Optional visibility scores per landmark
+    confidence_score FLOAT NOT NULL,  -- Detection confidence, used for filtering
+    FOREIGN KEY (frame_id) REFERENCES key_frames(frame_id) ON DELETE CASCADE
+);
+
+-- Music Recommendations table for storing dance-style-specific MP4 files
+CREATE TABLE IF NOT EXISTS music_recommendations (
+    music_id INT AUTO_INCREMENT PRIMARY KEY,
+    dance_style VARCHAR(50) NOT NULL,  -- e.g., 'salsa', 'hip-hop'
+    mp4_file_path VARCHAR(255) NOT NULL,
+    music_title VARCHAR(255) NOT NULL,
+    tempo_bpm INT,  -- Beats per minute for dance synchronization
+    duration_seconds INT DEFAULT 180,  -- Default 3 minutes
+    upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- Feedback Reports table for storing analysis results and recommendations
+CREATE TABLE IF NOT EXISTS feedback_reports (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    video_id INT NOT NULL,
+    user_id INT NOT NULL,
+    feedback_text TEXT,
+    recommended_music_id INT,  -- Links to music_recommendations.music_id
+    generated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (video_id) REFERENCES videos(video_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (recommended_music_id) REFERENCES music_recommendations(music_id) ON DELETE SET NULL
+);

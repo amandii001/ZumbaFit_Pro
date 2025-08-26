@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Login - ZumbaFit Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'zumba-purple': '#8B5CF6',
+                        'zumba-pink': '#EC4899',
+                        'zumba-orange': '#F97316',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <h2 class="text-2xl font-bold mb-6 text-zumba-purple text-center">User Login</h2>
+        <form id="loginForm" method="POST" action="#" novalidate>
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 font-semibold mb-1">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@email.com"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-zumba-purple"
+                />
+                <p class="text-red-600 text-sm mt-1 hidden" id="emailError">Please enter a valid email address.</p>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="block text-gray-700 font-semibold mb-1">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-zumba-purple"
+                />
+                <p class="text-red-600 text-sm mt-1 hidden" id="passwordError">Password is required.</p>
+            </div>
+            <div class="mb-4 flex items-center">
+                <input
+                    type="checkbox"
+                    id="rememberMe"
+                    name="rememberMe"
+                    class="mr-2"
+                />
+                <label for="rememberMe" class="text-gray-700 select-none">Remember me</label>
+            </div>
+            <button
+                type="submit"
+                class="w-full bg-zumba-purple text-white font-semibold py-2 rounded hover:bg-zumba-pink transition-colors"
+            >
+                Login
+            </button>
+        </form>
+        <div class="my-4 flex items-center justify-center">
+            <span class="border-b border-gray-300 w-full"></span>
+            <span class="px-3 text-gray-500">or</span>
+            <span class="border-b border-gray-300 w-full"></span>
+        </div>
+        <a
+            href="#"
+            class="block w-full text-center bg-white border border-gray-300 rounded py-2 font-semibold text-gray-700 hover:bg-gray-100"
+            aria-label="Sign in with Google"
+        >
+            Sign in with Google
+        </a>
+        <p class="mt-6 text-center text-gray-600">
+            Don't have an account?
+            <a href="user_registration.html" class="text-zumba-purple hover:underline">Register here</a>
+        </p>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function showMessage(message, isError = false) {
+            // Create or update message element
+            let messageEl = document.getElementById('message');
+            if (!messageEl) {
+                messageEl = document.createElement('div');
+                messageEl.id = 'message';
+                messageEl.className = 'mt-4 p-3 rounded text-center';
+                loginForm.parentNode.insertBefore(messageEl, loginForm.nextSibling);
+            }
+            
+            messageEl.textContent = message;
+            messageEl.className = `mt-4 p-3 rounded text-center ${isError ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`;
+        }
+
+        // Check if user just registered and pre-fill email
+        window.addEventListener('load', function() {
+            const registeredUser = localStorage.getItem('registeredUser');
+            if (registeredUser) {
+                const user = JSON.parse(registeredUser);
+                emailInput.value = user.email;
+                localStorage.removeItem('registeredUser'); // Clear after use
+            }
+        });
+
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            let valid = true;
+
+            // Clear previous messages
+            showMessage('', false);
+
+            if (!emailInput.value || !validateEmail(emailInput.value)) {
+                emailError.classList.remove('hidden');
+                valid = false;
+            } else {
+                emailError.classList.add('hidden');
+            }
+
+            if (!passwordInput.value) {
+                passwordError.classList.remove('hidden');
+                valid = false;
+            } else {
+                passwordError.classList.add('hidden');
+            }
+
+            if (!valid) {
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Logging in...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: emailInput.value,
+                        password: passwordInput.value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('✅ Login successful! Redirecting...', false);
+                    
+                    // Store user session
+                    localStorage.setItem('userSession', JSON.stringify({
+                        user_id: data.user_id,
+                        name: data.name,
+                        email: data.email
+                    }));
+                    
+                    // Redirect to upload page after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = 'upload.html';
+                    }, 1500);
+                } else {
+                    showMessage(`❌ ${data.detail || 'Login failed'}`, true);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('❌ Network error. Please try again.', true);
+            } finally {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
